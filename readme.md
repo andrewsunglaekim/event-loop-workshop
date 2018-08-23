@@ -1,5 +1,4 @@
 # The Event Loop, promises and async/await
-Have you ever wondered how Javascript, a single threaded language, executes code asynchronously? Come to this workshop to find out. If you're not interested in any of theory, we'll also be implementing some promises with "thens" and async/await.
 
 ## Learning objectives
 - Define Javascript as a single threaded language within the browser
@@ -14,10 +13,12 @@ Have you ever wondered how Javascript, a single threaded language, executes code
 - Leverage async/await as wrappers for promises
 
 ## Framing
-Asynchronous programming in Javascript can be a pretty daunting hurdle to overcome. When we debug async code, problems arise where it can be difficult to even pinpoint where the problem is happening. This workshop is designed to establish a base level understanding of how, and maybe more importantly, **when** javascript code executes within a code base. We'll also write cleaner async functions with the new `async`/`await` syntax.
+Asynchronous programming in Javascript can be a pretty daunting hurdle to overcome. When we write/debug async code, problems arise where it can be difficult to even pinpoint where the problem is happening. This workshop is designed to establish a base level understanding of how, and maybe more importantly, **when** javascript code executes within a code base. We'll also write cleaner async functions with the new `async`/`await` syntax.
 
 ## Javascript is single threaded
 In computer programming, single-threading is the processing of one command at a time. JS is a programming language that is single threaded. Javascript code, in its single threaded nature must "run to completion" within an execution context.
+
+In order to understand the complex nature of asynch program execution, we need to establish a strong foundation in understanding of how JS's synchronous program execution works.
 
 Take this code for example:
 
@@ -26,7 +27,9 @@ const number = 5 + 5;
 console.log(number);
 ```
 
-We could say with a pretty high degree of certainty that this code would never pause in the middle of it's evaluation.
+Pretty simple javascript. A simple arithmetic method stored into a variable and then subsequently logged.
+
+We could say with a pretty high degree of certainty that this code would never pause in the middle of it's evaluation. Let's come back to this code when we know a bit more a execution context and the call stack.
 
 ## execution context
 Execution context is defined as the environment in which JavaScript code is executed. The JavaScript engine creates a global execution context before it starts to execute any code(think `main.js` or `script.js`). From that point on, a new execution context gets created every time a function is executed, as the engine parses through your code.
@@ -43,19 +46,20 @@ function add(num1, num2) {
 }
 
 const number = add(5, 5);
-console.log(number)
+console.log(number);
 ```
 
-In this snippet, there are two execution contexts that are used. We're already aware of the global execution context of just running this script. The other execution context is created on the invocation of the `add` function with respect to this line:
+In this snippet, there are three execution contexts that are used. We're already aware of the global execution context of just running this script. The other execution contexts as created on the invocation of the `add` function and `.log` method with respect to these line:
 
 ```javascript
 const number = add(5, 5);
+console.log(number);
 ```
 
 ## Call Stack
 The call stack is a collection of execution contexts.
 
-> The easiest way to conceptualize the call stack and various other components of JS execution is visualizations. Throughout this workshop, there will be visuals to help describe the various mechanisms of JS execution. Assume the snippets are named `main.js`
+> The easiest way to conceptualize the call stack and various other components of JS execution is visualizations. Throughout this workshop, there will be visuals to help describe the various mechanisms of JS execution. Assume the snippets are named `main.js`. For clarity, we'll show global context here in this first example, but subsequent examples won't include the global execution context of `main.js`. Additionally, many of them following this one will be hidden within details of a summary, so make sure to click the triangles for visualization.
 
 Let's take another look at how the following code is executed within the call stack:
 
@@ -64,9 +68,61 @@ const number = 5 + 5;
 console.log(number);
 ```
 
+This code happens in milliseconds, but let's get granular and dissect how each part of this code executes. The script(`main.js`) starts and opens the global execution context:
+
+<img src="images/el-mainJS.png"/>
+
+Then the add(`+`) method starts:
+
+<img src="images/el-add.png"/>
+
+Add (`+`) method finishes:
+
+<img src="images/el-mainJS.png"/>
+
+`console.log` starts:
+
+<img src="images/el-log.png"/>
+
+`console.log` finishes:
+
+<img src="images/el-mainJS.png"/>
+
+Script `main.js` and program finishes:
+
+<img src="images/el-empty.png"/>
+
+> For future visualizations, we'll assume the global execution context of `main.js`
+
+Through these visualizations we can start to see the single threaded nature of javascript.
+
+### The Problem
+
+The problem with single threaded programming is that some processes take a long time. Let's take a look at this [code pen example](https://codepen.io/andrewsunglaekim/pen/RYPLmz)
+
+Now this particular process took an... infinity amount of time. In that time, we couldn't click the button again the gif stopped animating. But we, as developers, constantly need to use things that take an unknown or large amount of time. In the era of UI, even 500ms is far too long to block anything.
+
+We'll dig into why this gif froze later in the workshop.
+
+### The Solution
+
+Asynchronous programming. With async programming, we can delegate a `task` to be completed later. Go do this thing, and then when you're done with the thing, we'll tell you what to do next.
+
+### [Concurrency model](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop)
+We can do asynchronous behavior within javascript because of the "event loop". You can think of the "event loop" as an infinite loop that waits until code needs to be run.
+
+Straight from the [mdn docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop#Event_loop)
+
+"The event loop got its name because of how it's usually implemented, which usually resembles:"
+
+```js
+while (queue.waitForMessage()) {
+  queue.processNextMessage();
+}
+```
 
 
-Like we stated before, this snippet
+
 ###  JS single threaded but async
 
 ### js promises
