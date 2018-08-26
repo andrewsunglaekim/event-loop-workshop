@@ -7,7 +7,7 @@
 - Determine the composition and execution order of the javascript call stack
 - Identify the problem that asynchronous program execution solves
 - Describe the concurrency model of JS based on the "event loop"
-- Identify how Javascript handles asynchronous behavior despite being single threaded
+- Give an example of how the message queue is leveraged in javascript.
 - Identify the differences between tasks and micro tasks.
 - Leverage promises to handle asynchronous behavior
 - Leverage async/await as wrappers for promises
@@ -120,6 +120,50 @@ while (queue.waitForMessage()) {
   queue.processNextMessage();
 }
 ```
+
+An easy way to visualize the event loop is a simple browser event listener.
+
+Let's look at a simple button click event. `index.html`:
+
+```html
+<button id="demo">Click Me!!</button>
+```
+
+`script.js`:
+```js
+const button = document.getElementById('demo');
+button.addEventListener(() => {
+  console.log('button clicked!')
+})
+```
+
+We can examine this code now in the lense of the call stack.
+
+`document.getElementById('demo')` is called:
+
+<img src="images/el-getELID.png"/>
+
+`document.getElementById('demo')` is finished:
+
+<img src="images/el-empty.png"/>
+
+`button.addEventListener()` is called:
+
+<img src="images/el-addEvtList.png"/>
+
+`button.addEventListener()` is finished:
+
+<img src="images/el-empty.png"/>
+
+And the program is finished. Or is it? What happens if a user clicks my button. How is that callback being executed? The event loop is a constantly running thread. It needs a place to queue up tasks to do. Enter the message queue
+
+### [Message queue](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop#Queue)
+
+It's basically just a list of tasks that need to be processed by the JS thread. MDN really says it best:
+
+> At some point during the event loop, the runtime starts handling the messages on the queue, starting with the oldest one. To do so, the message is removed from the queue and its corresponding function is called with the message as an input parameter. As always, calling a function creates a new stack frame for that function's use.
+
+A user clicks our button. Let's visualize the call stack now with a message queue assuming our `script.js` has already run.
 
 
 
