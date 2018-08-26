@@ -3,19 +3,16 @@ button.addEventListener('click', () => {
   console.log('1');
   const p = new Promise((resolve, reject) => {
     if (Math.random() > 0) {
-      console.log('promise task is queued');
-      setTimeout(() => {
-        resolve();
-      }, 0)
       console.log('2');
+      resolve()
     } else {
       console.log('3');
       reject()
     }
   })
-  p.then((response) => {
+  p.then(() => {
     console.log('4');
-  }).catch((response) => {
+  }).catch(() => {
     console.log('5');
   })
 
