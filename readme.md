@@ -8,7 +8,7 @@
 - Identify the problem that asynchronous program execution solves
 - Describe the concurrency model of JS based on the "event loop"
 - Give an example of how the message queue is leveraged in javascript.
-- Identify the differences between tasks and micro tasks.
+- Identify a distinction between tasks and micro tasks.
 - Leverage promises to handle asynchronous behavior
 - Leverage async/await as wrappers for promises
 
@@ -20,16 +20,17 @@ In computer programming, single-threading is the processing of one command at a 
 
 In order to understand the complex nature of asynch program execution, we need to establish a strong foundation in understanding of how JS's synchronous program execution works.
 
-Take this code for example:
+### Discussion exercise 1 - the foundations
+Try to incorporate within your discussion the following terms:
+- run to completion
+- execution context
+- call stack
 
+Discuss the following code in your groups:
 ```javascript
 const number = 5 + 5;
 console.log(number);
 ```
-
-Pretty simple javascript. A simple arithmetic method stored into a variable and then subsequently logged.
-
-We could say with a pretty high degree of certainty that this code would never pause in the middle of it's evaluation. Let's come back to this code when we know a bit more a execution context and the call stack.
 
 ## execution context
 Execution context is defined as the environment in which JavaScript code is executed. The JavaScript engine creates a global execution context before it starts to execute any code(think `main.js` or `script.js`). From that point on, a new execution context gets created every time a function is executed, as the engine parses through your code.
@@ -49,12 +50,7 @@ const number = add(5, 5);
 console.log(number);
 ```
 
-In this snippet, there are three execution contexts that are used. We're already aware of the global execution context of just running this script. The other execution contexts as created on the invocation of the `add` function and `.log` method with respect to these line:
-
-```javascript
-const number = add(5, 5);
-console.log(number);
-```
+In this snippet, there are five execution contexts that are used. We're already aware of the global execution context of just running this script. The other execution contexts are created on the invocation of the `add`, `.log` methods but also the `+`, `=` operators.
 
 ## Call Stack
 The call stack is a collection of execution contexts.
@@ -72,11 +68,11 @@ This code happens in milliseconds, but let's get granular and dissect how each p
 
 <img src="images/el-mainJS.png"/>
 
-Then the add(`+`) method starts:
+Then the add operator(`+`) starts:
 
 <img src="images/el-add.png"/>
 
-Add (`+`) method finishes:
+Add operator(`+`) finishes:
 
 <img src="images/el-mainJS.png"/>
 
@@ -121,7 +117,7 @@ while (queue.waitForMessage()) {
 }
 ```
 
-An easy way to visualize the event loop is a simple browser event listener.
+An easy way to visualize the event loop is through a simple browser event listener.
 
 Let's look at a simple button click event. `index.html`:
 
@@ -129,7 +125,7 @@ Let's look at a simple button click event. `index.html`:
 <button id="demo">Click Me!!</button>
 ```
 
-`script.js`:
+`main.js`:
 ```js
 const button = document.getElementById('demo');
 button.addEventListener(() => {
@@ -163,8 +159,17 @@ It's basically just a list of tasks that need to be processed by the JS thread. 
 
 > At some point during the event loop, the runtime starts handling the messages on the queue, starting with the oldest one. To do so, the message is removed from the queue and its corresponding function is called with the message as an input parameter. As always, calling a function creates a new stack frame for that function's use.
 
-A user clicks our button. Let's visualize the call stack now with a message queue assuming our `script.js` has already run.
+Let's visualize the call stack now with a message queue assuming our `main.js` has already run. A user clicks our button and queues a task(`console.log()`):
 
+<img src="images/el-queLog.png"/>
+
+The event loop, after having completed running the initial `main.js`, has it's first message to execute. It's important to note the call stack must be empty in order for a message to be taken off the queue to execute.
+
+In this case, the call stack is empty so the message is immediately read and put onto the call stack:
+
+<img src="images/el-logWEmptyQue.png"/>
+
+Then `console.log()` naturally finishes it's execution.
 
 
 ###  JS single threaded but async
