@@ -1,3 +1,4 @@
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 # The Event Loop, promises and async/await
 
 ## Learning objectives
@@ -20,8 +21,8 @@ In computer programming, single-threading is the processing of one command at a 
 
 In order to understand the complex nature of asynch program execution, we need to establish a strong foundation in understanding of how JS's synchronous program execution works.
 
-### Discussion exercise 1 - the foundations
-Try to incorporate within your discussion the following terms:
+### Discussion exercise 1 - the unknown foundations
+Try to incorporate within your discussion the following terms or discuss the terms you are unfamiliar with:
 - run to completion
 - execution context
 - call stack
@@ -68,11 +69,19 @@ This code happens in milliseconds, but let's get granular and dissect how each p
 
 <img src="images/el-mainJS.png"/>
 
-Then the add operator(`+`) starts:
+Add operator(`+`) starts:
 
 <img src="images/el-add.png"/>
 
 Add operator(`+`) finishes:
+
+<img src="images/el-mainJS.png"/>
+
+Assignment operator(`=`) starts:
+
+<img src="images/el-assignment.png"/>
+
+Assignment operator(`=`) finishes:
 
 <img src="images/el-mainJS.png"/>
 
@@ -88,7 +97,7 @@ Script `main.js` and program finishes:
 
 <img src="images/el-empty.png"/>
 
-> For future visualizations, we'll assume the global execution context of `main.js`
+> For future visualizations, we'll assume the global execution context of `main.js` and leave out operators for brevity.
 
 Through these visualizations we can start to see the single threaded nature of javascript.
 
@@ -117,9 +126,14 @@ while (queue.waitForMessage()) {
 }
 ```
 
+### Discussion exercise 2 - the "event loop" and the queue
 An easy way to visualize the event loop is through a simple browser event listener.
 
-Let's look at a simple button click event. `index.html`:
+Try to incorporate within your discussion the following terms or discuss the terms you are unfamiliar with respect to this code
+- event loop
+- message queue
+
+Discuss the following code: `index.html`:
 
 ```html
 <button id="demo">Click Me!!</button>
@@ -171,8 +185,84 @@ In this case, the call stack is empty so the message is immediately read and put
 
 Then `console.log()` naturally finishes it's execution.
 
+### Run to completion
+
+We mentioned "run to completion" earlier. That fact plays a very important roll in when queued tasks get actually run. Here's the thing, tasks can **only** be run when the call stack is empty. That is to say, if a function hasn't completely "run to completion" yet, a queued task can never be run.
+
+Let's take a look at [this code pen link] to visualize "run to completion".
+
+```js
+for(let i = 0; i < 700000; i++){
+  if(i % 500 === 0) console.log(i);
+}
+```
+
+Depending on the computer, the above code takes roughly a second while dev tools are open. If we were to pour through the logs after clicking several times very quickly, we would see that none of the numbers get mixed up, each function completely finishes before the next message in the task get's queued.
 
 ###  JS single threaded but async
+Even though we say JS as a language is single threaded, browsers and `node.js` are not. Things like `.setTimeout`, `XMLHttpRequest` file I/O are browser or node apis which behaviors are handled outside of the main thread. They get plugged into the main thread through the message queue.
 
 ### js promises
+
+We can use promises to queue up messages from these various apis.
+
 The Promise object represents the eventual completion (or failure) of an asynchronous operation, and its resulting value.
+
+### Discussion exercise 3 - determining order
+
+Let's take the first minute looking at the code alone with the following things in mind:
+
+- eventual completion (or failure) of an asynchronous operation
+- how tasks get queued and in which order the tasks get completed
+- if you're unfamiliar with the syntax, try to conceptualize the english meanings of the code you see.
+
+```js
+const button = document.getElementById('demo');
+button.addEventListener('click', () => {
+  console.log('1');
+  const p = new Promise((resolve, reject) => {
+    if (Math.random() > 0.5) {
+      console.log('2');
+      resolve();
+    } else {
+      console.log('3');
+      reject()
+    }
+  })
+  p.then(() => {
+    console.log('4');
+  }).catch(() => {
+    console.log('5');
+  })
+
+  setTimeout(() => {
+    console.log('6');
+  }, 0)
+  console.log('7');
+})
+```
+
+Now in groups discuss the following:
+
+- What happens on load of this script?
+- How many of each number will we see when the button is clicked?
+- in what order do the numbers appear when the button is clicked?
+
+<details>
+<summary>Here's What happens on the click</summary>
+
+`1` is logged:
+
+<img src="images/el-logWEmptyQue.png"/>
+
+`1` finishes logging and a `new Promise()` is created:
+
+<img src="images/el-newPromise.png"/>
+
+
+<code>
+  console.log('boop')
+  lol
+</code>
+
+</details>
