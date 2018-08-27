@@ -9,8 +9,8 @@
 - Identify the problem that asynchronous program execution solves
 - Describe the concurrency model of JS based on the "event loop"
 - Give an example of how the message queue is leveraged in javascript.
-- Identify a distinction between tasks and micro tasks.
 - Leverage promises to handle asynchronous behavior
+- Identify a distinction between tasks and micro tasks.
 - Leverage async/await as wrappers for promises
 
 ## Framing (2/2)
@@ -293,4 +293,58 @@ After `.then` and `.catch` get called and define the handlers, Immediately a tas
 
 Remember, we can only execute a task in the queue if the call stack is empty. Our call stack, however, is still within the context of the `click` event's callback. Until that's done the event loop can't access the messages in the queue.
 
-So the code moves on to `setTimeout`. [setTimeout is exposed by the browsers `window` object](https://stackoverflow.com/questions/36754971/is-settimeout-a-part-of-javascript-it-self-or-it-is-just-an-api-that-the-browser) It allows us to queue up a task for some later time. In this case 0 ms or the moment after we call `setTimeout`
+So the code moves on to `setTimeout`. [setTimeout is exposed by the browsers `window` object](https://stackoverflow.com/questions/36754971/is-settimeout-a-part-of-javascript-it-self-or-it-is-just-an-api-that-the-browser) It allows us to queue up a task for some later time. In this case 0 ms or the moment after we call `setTimeout` it will queue up the task for another `console.log()`:
+
+<img src="images/el-setTimeoutQueued.png"/>
+
+Then finally the last `console.log(7)` executes and the clicks execution context has ended.
+
+The messages in the queue are then evaluated in order with either `4` or `5` then `6`.
+
+### Discussion exercise 4 - Rethinking order (5/65)
+
+Let's examine the same code only now let's place the `setTimeout` further up in the code:
+
+```js
+const button = document.getElementById('demo');
+button.addEventListener('click', () => {
+  console.log('1');
+  setTimeout(() => {
+    console.log('6');
+  }, 0)
+  const p = new Promise((resolve, reject) => {
+    if (Math.random() > 0.5) {
+      console.log('2');
+      resolve();
+    } else {
+      console.log('3');
+      reject()
+    }
+  })
+  p.then(() => {
+    console.log('4');
+  }).catch(() => {
+    console.log('5');
+  })
+
+  console.log('7');
+})
+```
+
+What is the order in which the logs will appear?
+
+<details>
+<summary>The Answer</summary>
+
+The answer is the same as the last answer.
+</details>
+
+### [Micro tasks](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
+
+Turns out, certain tasks have a higher priority as tasks and get settled before others.
+
+we can visualize the queue as such:
+
+<img src="images/el-microTaskQueue.png"/>
+
+The event loop will always take the top most message in the visual queue above. That is to say, the queue will always send micro tasks, if there are any, before regular tasks. In this case, even though `setTimeout` was queued before the promise's task, it was logged later because the promise's task was prioritized
