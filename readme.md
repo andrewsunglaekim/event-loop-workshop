@@ -1,4 +1,3 @@
-<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 # The Event Loop, promises and async/await
 
 ## Learning objectives
