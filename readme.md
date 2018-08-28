@@ -397,9 +397,37 @@ When the user clicks on  the button, the click event will fire one in succession
 
 <img src="images/el-firstSetTimeout.png"/>
 
-`.then`
+`.then` queues up a microtask:
 
-Microtasks can actually processed between callbacks
+<img src="images/el-firstThen.png"/>
+
+Something interesting happens here. Microtasks can actually be processed between callbacks. Regular tasks have to be run after tasks have run to completion. In the midst of our event propagation (the button click bubbling to its parent div), microtasks like the one sent by our `.then` will be executed. So as soon as the 1st `onClick` comes off the callstack, our microtask gets processed and logs the word "promise":
+
+<img src="images/el-firstPromiseOff.png"/>
+
+Tasks do not run between callbacks, so the event bubbles to the div and `onClick` is fired again which logs the second `click` immediately:
+
+<img src="images/el-secondClick.png"/>
+
+`setTimout` is invoked and sets a task to `.log('timeout')`
+
+<img src="images/el-secondTimeout.png"/>
+
+`.then` queues up a microtask:
+
+<img src="images/el-secondThen.png"/>
+
+The second `onClick()` finishes then the messages in the queue are read in order starting with microtasks:
+
+<img src="images/el-secondPromise.png"/>
+
+Then both the `'timeout'` tasks are run as well.
+
+### Bonus - Discussion
+
+What happens if you add `button.click()` to the end of the file.
+What will log on page load?
+
 ### Thanks
 
 Jake Archibald is a brilliant person and much of this workshop is derived if not stolen directly from his [event loop video](https://www.youtube.com/watch?v=cCOL7MC4Pl0) and [blog post](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
