@@ -14,7 +14,7 @@
 - Leverage async/await as wrappers for promises
 
 ## Framing (2/2)
-Asynchronous programming in Javascript can be a pretty daunting hurdle to overcome. When we write/debug async code, problems arise where it can be difficult to even pinpoint where the problem is happening. This workshop is designed to establish a base level understanding of how, and maybe more importantly, **when** javascript code executes within a code base. We'll also write cleaner async functions with the new `async`/`await` syntax.
+Asynchronous programming in Javascript can be a pretty daunting hurdle to overcome. When we write/debug async code, problems arise where it can be difficult to even pinpoint where the problem is happening. This workshop is designed to establish a base level understanding of how, and maybe more importantly, **when** javascript code executes within a code base.
 
 ## Javascript is single threaded (3/5)
 In computer programming, single-threading is the processing of one command at a time. JS is a programming language that is single threaded. Javascript code, in its single threaded nature must "run to completion" within an execution context.
@@ -189,7 +189,7 @@ Then `console.log()` naturally finishes it's execution.
 
 We mentioned "run to completion" earlier. That fact plays a very important roll in when queued tasks get actually run. Here's the thing, tasks can **only** be run when the call stack is empty. That is to say, if a function hasn't completely "run to completion" yet, a queued task can never be run.
 
-Let's take a look at [this code pen link] to visualize "run to completion".
+Let's take a look at [this code pen link](https://codepen.io/andrewsunglaekim/pen/RYPjOG) to visualize "run to completion".
 
 ```js
 for(let i = 0; i < 700000; i++){
@@ -200,7 +200,7 @@ for(let i = 0; i < 700000; i++){
 Depending on the computer, the above code takes roughly a second while dev tools are open. If we were to pour through the logs after clicking several times very quickly, we would see that none of the numbers get mixed up, each function completely finishes before the next message in the task get's queued.
 
 ###  JS single threaded but async (2/47)
-Even though we say JS as a language is single threaded, browsers and `node.js` are not. Things like `.setTimeout`, `XMLHttpRequest` file I/O are browser or node apis which behaviors are handled outside of the main thread. They get plugged into the main thread through the message queue.
+Even though we say JS as a language is single threaded, browsers and `node.js` are not. Things like `.setTimeout`, `XMLHttpRequest` file I/O are browser or node apis which behaviors are handled outside of the main thread. We can't tie up the main thread with long processes like fetching data or waiting of n milliseconds. Instead, we call functions to defer these processes to browser/node apis. Those apis get plugged back into the main thread through the message queue.
 
 ### js promises (3/50)
 
@@ -347,4 +347,14 @@ we can visualize the queue as such:
 
 <img src="images/el-microTaskQueue.png"/>
 
-The event loop will always take the top most message in the visual queue above. That is to say, the queue will always send micro tasks, if there are any, before regular tasks. In this case, even though `setTimeout` was queued before the promise's task, it was logged later because the promise's task was prioritized
+The event loop will always take the top and left most message in the visual queue above. That is to say, the queue will always send micro tasks, if there are any, before regular tasks. In this case, even though `setTimeout` was queued before the promise's task, it was logged later because the promise's task was prioritized
+
+
+
+### Thanks
+
+Jake Archibald is a brilliant person and much of this workshop is derived is not stolen directly from his [event loop video](https://www.youtube.com/watch?v=cCOL7MC4Pl0) and [blog post](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
+
+Also Philip Roberts, probably stole some stuff from [his video](https://www.youtube.com/watch?v=8aGhZQkoFbQ)
+
+Also, I don't know these dudes, I just think they're awesome and smart.
