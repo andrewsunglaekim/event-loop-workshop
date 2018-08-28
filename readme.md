@@ -15,6 +15,8 @@
 ## Framing (2/2)
 Asynchronous programming in Javascript can be a pretty daunting hurdle to overcome. When we write/debug async code, problems arise where it can be difficult to even pinpoint where the problem is happening. This workshop is designed to establish a base level understanding of how, and maybe more importantly, **when** javascript code executes within a code base.
 
+> It's ok to not know the concepts during the discussion exercises, they will be explained afterwards. Programmers generally ... names things well. If you don't know a concept, it is encouraged to take your best guess and contribute to the discussion. 
+
 ## Javascript is single threaded (3/5)
 In computer programming, single-threading is the processing of one command at a time. JS is a programming language that is single threaded. Javascript code, in its single threaded nature must "run to completion" within an execution context.
 
