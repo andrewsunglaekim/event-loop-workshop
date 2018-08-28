@@ -349,11 +349,60 @@ we can visualize the queue as such:
 
 The event loop will always take the top and left most message in the visual queue above. That is to say, the queue will always send micro tasks, if there are any, before regular tasks. In this case, even though `setTimeout` was queued before the promise's task, it was logged later because the promise's task was prioritized
 
+### Discussion exercise 5 - microtask specifics (10/75)
 
+Chat about [this codepen](https://codepen.io/andrewsunglaekim/pen/MqeaVj)
 
+Before we open the log and click the button. Discuss with your group for 3 minutes what the result would be and formulate an answer. After 3 minutes, click the button and discuss why your findings were correct or incorrect for 2 minutes.
+
+Here's the code. `index.html`:
+
+```html
+<div id="outter">
+  <button id="bob">Click me</button>
+</div>
+```
+
+```js
+const button = document.getElementById('bob');
+const outter = document.getElementById('outter');
+
+function onClick() {
+  console.log('click');
+
+  setTimeout(function() {
+    console.log('timeout');
+  }, 0);
+
+  Promise.resolve().then(function() {
+    console.log('promise');
+  });
+}
+
+button.addEventListener('click', onClick);
+outter.addEventListener('click', onClick);
+```
+
+> there's a difference in the `Promise` used here and the instance of `Promise` used above using the `new` keyword. For the purposes of this code snippet, it's just important to note the callback within `.then` is queued as a micro task.
+
+Read these visualization to gain full clarity on how the above code executes on click.
+
+When the user clicks on  the button, the click event will fire one in succession after the other. Creating an execution context for each `onClick` invocation. Here is the first `onClick` on the call stack and where the first log happens:
+
+> the blurred blue rectangles here represent the action of invoking the function, where as the blurred yellow rectangles represents a message coming off the queue into an invocation on the call stack represented again through blurred blue rectangles. Additionally, for the purposes of simplification `Promise.resolve()` won't be visualized.
+
+<img src="images/el-firstLogClick.png"/>
+
+`setTimeout` is invoked and queues a task:
+
+<img src="images/el-firstSetTimeout.png"/>
+
+`.then`
+
+Microtasks can actually processed between callbacks
 ### Thanks
 
-Jake Archibald is a brilliant person and much of this workshop is derived is not stolen directly from his [event loop video](https://www.youtube.com/watch?v=cCOL7MC4Pl0) and [blog post](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
+Jake Archibald is a brilliant person and much of this workshop is derived if not stolen directly from his [event loop video](https://www.youtube.com/watch?v=cCOL7MC4Pl0) and [blog post](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
 
 Also Philip Roberts, probably stole some stuff from [his video](https://www.youtube.com/watch?v=8aGhZQkoFbQ)
 
