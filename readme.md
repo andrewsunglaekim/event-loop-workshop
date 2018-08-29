@@ -10,7 +10,7 @@
 - [Give an example of how the message queue is leveraged in javascript.](https://github.com/andrewsunglaekim/event-loop-workshop#message-queue-1045)
 - [Leverage promises to handle asynchronous behavior](https://github.com/andrewsunglaekim/event-loop-workshop#js-promises-350)
 - [Identify a distinction between tasks and micro tasks.](https://github.com/andrewsunglaekim/event-loop-workshop#micro-tasks)
-- [Leverage async/await as wrappers for promises](https://github.com/andrewsunglaekim/event-loop-workshop#apologies-async-await)
+- [Leverage async/await as wrappers for promises](https://github.com/andrewsunglaekim/event-loop-workshop#apologies---asyncawait)
 
 ## Framing (2/2)
 Asynchronous programming in Javascript can be a pretty daunting hurdle to overcome. When we write/debug async code, problems arise where it can be difficult to even pinpoint where the problem is happening. This workshop is designed to establish a base level understanding of how, and maybe more importantly, **when** javascript code executes within a code base.
@@ -33,6 +33,8 @@ Discuss the following code in your groups:
 const number = 5 + 5;
 console.log(number);
 ```
+
+---
 
 ## execution context (2/17)
 Execution context is defined as the environment in which JavaScript code is executed. The JavaScript engine creates a global execution context before it starts to execute any code(think `main.js` or `script.js`). From that point on, a new execution context gets created every time a function is executed, as the engine parses through your code.
@@ -108,11 +110,9 @@ The problem with single threaded programming is that some processes take a long 
 
 Now this particular process took an... infinity amount of time. In that time, we couldn't click the button again the gif stopped animating. But we, as developers, constantly need to use things that take an unknown or large amount of time. In the era of UI, even 500ms is far too long to block anything.
 
-We'll dig into why this gif froze later in the workshop.
-
 ### The Solution (5/30)
 
-Asynchronous programming. With async programming, we can delegate a `task` to be completed later. Go do this thing, and then when you're done with the thing, we'll tell you what to do next.
+Asynchronous programming. With async programming, we can defer functionality to another api and create a `task` to be completed later based on the result. Go do this thing, and then when you're done with the thing, we'll tell you what to do next.
 
 ### [Concurrency model](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop)
 We can do asynchronous behavior within javascript because of the "event loop". You can think of the "event loop" as an infinite loop that waits until code needs to be run.
@@ -147,6 +147,8 @@ button.addEventListener(() => {
   console.log('button clicked!')
 })
 ```
+
+---
 
 We can examine this code now in the lense of the call stack.
 
@@ -258,6 +260,8 @@ Now in groups discuss the following:
   6<br>
 </details>
 
+---
+
 #### Here's What happens on the click
 
 First off the click opens an execution context onto the call stack. We won't show this in the visuals ahead, but we won't be able to hit any of our messages until the execution context of the click callback is finished.
@@ -340,6 +344,8 @@ What is the order in which the logs will appear?
 The answer is the same as the last answer.
 </details>
 
+---
+
 ### [Micro tasks](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
 
 Turns out, certain tasks have a higher priority as tasks and get settled before others.
@@ -386,6 +392,8 @@ outter.addEventListener('click', onClick);
 
 > there's a difference in the `Promise` used here and the instance of `Promise` used above using the `new` keyword. For the purposes of this code snippet, it's just important to note the callback within `.then` is queued as a micro task.
 
+---
+
 Read these visualization to gain full clarity on how the above code executes on click.
 
 When the user clicks on  the button, the click event will fire one in succession after the other. Creating an execution context for each `onClick` invocation. Here is the first `onClick` on the call stack and where the first log happens:
@@ -430,7 +438,11 @@ What happens if you add `button.click()` to the end of the file.
 What will log on page load?
 
 ### Apologies - `async`/`await`
-So when I gave the title and description of this class a month ago, I thought I would pepper in a bit of async await code at the end to show how that syntatic sugar can clean up a code base.(and it does a really great job doing that!) However, while developing this workshop, I felt it was a bit out of scope and doesn't really add any additional value to the concepts discussed today. `async/await` is really just a wrapper for promises and act on the message queue and call stack in the same way. If there's enough interest, we could do a workshop doing actual api calls with nested promises and see how async/await can help clean up that async code.
+So when I gave the title and description of this class a month ago, I thought I would pepper in a bit of async await code at the end to show how that syntatic sugar can clean up a code base.(and it does a really great job doing that!)
+
+However, while developing this workshop, I felt it was a bit out of scope and doesn't really add any additional value to the concepts discussed today. `async/await` is really just a wrapper for promises and act on the message queue and call stack in the same way.
+
+If there's enough interest, we could do a workshop doing actual api calls with nested promises and see how async/await can help clean up that async code and focus a little on return values of promises.
 
 ### Thanks
 
