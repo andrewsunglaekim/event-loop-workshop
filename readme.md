@@ -54,7 +54,9 @@ const number = add(5, 5);
 console.log(number);
 ```
 
-In this snippet, there are at least five execution contexts that are used. We're already aware of the global execution context of just running this script. The other possible execution contexts are created on the invocation of the `add`, `.log` methods but also the `+`, `=` operators.
+In this snippet, there are at least five three contexts that are used. We're already aware of the global execution context of just running this script. The some other execution contexts are created on the invocation of the `add`, `.log`.
+
+One thing that doesn't go on the call stack is the actual function declaration. This just gets stored in the heap as a function.
 
 ## Call Stack (3/20)
 The call stack is a collection of execution contexts.
@@ -67,6 +69,8 @@ Let's take another look at how the following code is executed within the call st
 const number = 5 + 5;
 console.log(number);
 ```
+
+> When developing this lesson plan, I thought that operators(`+` and `=` acted like functions on the callstack) in javascript. However, they do not, they are actually much closer to the metal than a function invocation. None the less, if we were to imagine operators as function calls they would operate in the callstack in the following manner.
 
 This code happens in milliseconds, but let's get granular and dissect how each part of this code executes. The script(`main.js`) starts and opens the global execution context:
 
@@ -100,7 +104,7 @@ Script `main.js` and program finishes:
 
 <img src="images/el-empty.png"/>
 
-> For future visualizations, we'll assume some execution contexts like global and others and only highlight the ones in the callstack pertinent to the relevant information.
+> Generally we program on top of a lot of other peoples code. For future visualizations, we'll assume some execution contexts like global and others and only highlight the ones in the callstack pertinent to the relevant information.
 
 Through these visualizations we can start to see the single threaded nature of javascript.
 
@@ -203,7 +207,9 @@ for(let i = 0; i < 700000; i++){
 Depending on the computer, the above code takes roughly a second while dev tools are open. If we were to pour through the logs after clicking several times very quickly, we would see that none of the numbers get mixed up, each function completely finishes before the next message in the task get's queued.
 
 ###  JS single threaded but async (2/47)
-Even though we say JS as a language is single threaded, browsers and `node.js` are not. Things like `.setTimeout`, `XMLHttpRequest` file I/O are browser or node apis which behaviors are handled outside of the main thread. We can't tie up the main thread with long processes like fetching data or waiting of n milliseconds. Instead, we call functions to defer these processes to browser/node apis. Those apis get plugged back into the main thread through the message queue.
+Even though we say JS as a language is single threaded, browsers and `node.js` are not. Things like `.setTimeout`, `XMLHttpRequest` file I/O are browser or node apis which behaviors are handled outside of the main thread. We can't tie up the main thread with long processes like fetching data or waiting of n milliseconds.
+
+Instead, we call functions to defer these processes to browser/node apis. Those apis get plugged back into the main thread through the message queue.
 
 ### js promises (3/50)
 
