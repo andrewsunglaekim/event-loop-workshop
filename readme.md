@@ -147,7 +147,7 @@ Discuss the following code: `index.html`:
 `main.js`:
 ```js
 const button = document.getElementById('demo');
-button.addEventListener(() => {
+button.addEventListener('click', () => {
   console.log('button clicked!')
 })
 ```
