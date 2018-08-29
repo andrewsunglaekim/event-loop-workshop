@@ -54,7 +54,7 @@ const number = add(5, 5);
 console.log(number);
 ```
 
-In this snippet, there are five execution contexts that are used. We're already aware of the global execution context of just running this script. The other execution contexts are created on the invocation of the `add`, `.log` methods but also the `+`, `=` operators.
+In this snippet, there are at least five execution contexts that are used. We're already aware of the global execution context of just running this script. The other possible execution contexts are created on the invocation of the `add`, `.log` methods but also the `+`, `=` operators.
 
 ## Call Stack (3/20)
 The call stack is a collection of execution contexts.
@@ -288,7 +288,7 @@ if (Math.random() > 0.5) {
 
 [The executor function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Syntax) of the promise executes as we'd expect through call stack and either `2` or `3` logs. Additionally the promise has already been resolved or rejected at this point.
 
-> It's important to note that normally nested within a `new Promise()` is generally asynchronous code, not synchronous code. However the promises always behave the same once resolved or rejected, IE. queue a task.
+> It's important to note that normally nested within a `new Promise()` is generally asynchronous code, not synchronous code. However the promises always behave the same once resolved or rejected, IE. queues a task.
 
 `.then` and `.catch` are called to handle the resolution or failure of `p`. At this point, p has resolved or rejected already, so a console.log() becomes queued up. `.then` and `.catch` always return a promise object. In a way you can think of defining them in tandem. You can think of it as Schroedinger's callback. It both is and isn't what happens until the promise finally resolves.
 
@@ -396,7 +396,7 @@ outter.addEventListener('click', onClick);
 
 Read these visualization to gain full clarity on how the above code executes on click.
 
-When the user clicks on  the button, the click event will fire one in succession after the other. Creating an execution context for each `onClick` invocation. Here is the first `onClick` on the call stack and where the first log happens:
+When the user clicks on  the button, the click event fires the button's event first adding a message to the queue. The event propagates to the outter div queues another message. Creating an execution context for each `onClick` invocation. Here is the first `onClick` on the call stack and where the first log happens:
 
 > the blurred blue rectangles here represent the action of invoking the function, where as the blurred yellow rectangles represents a message coming off the queue into an invocation on the call stack represented again through blurred blue rectangles. Additionally, for the purposes of simplification `Promise.resolve()` won't be visualized.
 
@@ -410,11 +410,13 @@ When the user clicks on  the button, the click event will fire one in succession
 
 <img src="images/el-firstThen.png"/>
 
-Something interesting happens here. Microtasks can actually be processed between callbacks. Regular tasks have to be run after tasks have run to completion. In the midst of our event propagation (the button click bubbling to its parent div), microtasks like the one sent by our `.then` will be executed. So as soon as the 1st `onClick` comes off the callstack, our microtask gets processed and logs the word "promise":
+The first `onClick` has finished it's execution. The call stack is empty so the event loop looks to the queue and finds there is a micro task to process:
+
+
 
 <img src="images/el-firstPromiseOff.png"/>
 
-Tasks do not run between callbacks, so the event bubbles to the div and `onClick` is fired again which logs the second `click` immediately:
+The next task is called which is the second `onClick` and second "click" is logged:
 
 <img src="images/el-secondClick.png"/>
 
