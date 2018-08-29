@@ -1,21 +1,21 @@
 # The Event Loop, promises and async/await
 
 ## Learning objectives
-- Define Javascript as a single threaded language within the browser
-- Explain how javascript functions "run to completion"
-- Define "execution context"
-- Determine the composition and execution order of the javascript call stack
-- Identify the problem that asynchronous program execution solves
-- Describe the concurrency model of JS based on the "event loop"
-- Give an example of how the message queue is leveraged in javascript.
-- Leverage promises to handle asynchronous behavior
-- Identify a distinction between tasks and micro tasks.
-- Leverage async/await as wrappers for promises
+- [Define Javascript as a single threaded language within the browser](https://github.com/andrewsunglaekim/event-loop-workshop#javascript-is-single-threaded-35)
+- [Explain how javascript functions "run to completion"](https://github.com/andrewsunglaekim/event-loop-workshop#run-to-completion)
+- [Define "execution context"](https://github.com/andrewsunglaekim/event-loop-workshop#execution-context-217)
+- [Determine the composition and execution order of the javascript call stack](https://github.com/andrewsunglaekim/event-loop-workshop#call-stack-320)
+- [Identify the problem that asynchronous program execution solves](https://github.com/andrewsunglaekim/event-loop-workshop#the-problem-525)
+- [Describe the concurrency model of JS based on the "event loop"](https://github.com/andrewsunglaekim/event-loop-workshop#concurrency-model)
+- [Give an example of how the message queue is leveraged in javascript.](https://github.com/andrewsunglaekim/event-loop-workshop#message-queue-1045)
+- [Leverage promises to handle asynchronous behavior](https://github.com/andrewsunglaekim/event-loop-workshop#js-promises-350)
+- [Identify a distinction between tasks and micro tasks.](https://github.com/andrewsunglaekim/event-loop-workshop#micro-tasks)
+- [Leverage async/await as wrappers for promises](https://github.com/andrewsunglaekim/event-loop-workshop#apologies-async-await)
 
 ## Framing (2/2)
 Asynchronous programming in Javascript can be a pretty daunting hurdle to overcome. When we write/debug async code, problems arise where it can be difficult to even pinpoint where the problem is happening. This workshop is designed to establish a base level understanding of how, and maybe more importantly, **when** javascript code executes within a code base.
 
-> It's ok to not know the concepts during the discussion exercises, they will be explained afterwards. Programmers generally ... names things well. If you don't know a concept, it is encouraged to take your best guess and contribute to the discussion. 
+> It's ok to not know the concepts during the discussion exercises, they will be explained afterwards. Programmers generally ... names things well. If you don't know a concept, it is encouraged to take your best guess and contribute to the discussion.
 
 ## Javascript is single threaded (3/5)
 In computer programming, single-threading is the processing of one command at a time. JS is a programming language that is single threaded. Javascript code, in its single threaded nature must "run to completion" within an execution context.
@@ -428,6 +428,9 @@ Then both the `'timeout'` tasks are run as well.
 
 What happens if you add `button.click()` to the end of the file.
 What will log on page load?
+
+### Apologies - `async`/`await`
+So when I gave the title and description of this class a month ago, I thought I would pepper in a bit of async await code at the end to show how that syntatic sugar can clean up a code base.(and it does a really great job doing that!) However, while developing this workshop, I felt it was a bit out of scope and doesn't really add any additional value to the concepts discussed today. `async/await` is really just a wrapper for promises and act on the message queue and call stack in the same way. If there's enough interest, we could do a workshop doing actual api calls with nested promises and see how async/await can help clean up that async code.
 
 ### Thanks
 
