@@ -1,6 +1,6 @@
-# The Event Loop, promises and async/await
+# Asynchronous JS and the message queue
 
-## Learning objectives
+## Learning objectives (4/4)
 - [Define Javascript as a single threaded language within the browser](https://github.com/andrewsunglaekim/event-loop-workshop#javascript-is-single-threaded-35)
 - [Explain how javascript functions "run to completion"](https://github.com/andrewsunglaekim/event-loop-workshop#run-to-completion)
 - [Define "execution context"](https://github.com/andrewsunglaekim/event-loop-workshop#execution-context-217)
@@ -10,19 +10,18 @@
 - [Give an example of how the message queue is leveraged in javascript.](https://github.com/andrewsunglaekim/event-loop-workshop#message-queue-1045)
 - [Leverage promises to handle asynchronous behavior](https://github.com/andrewsunglaekim/event-loop-workshop#js-promises-350)
 - [Identify a distinction between tasks and micro tasks.](https://github.com/andrewsunglaekim/event-loop-workshop#micro-tasks)
-- [Leverage async/await as wrappers for promises](https://github.com/andrewsunglaekim/event-loop-workshop#apologies---asyncawait)
 
-## Framing (2/2)
+## Framing
 Asynchronous programming in Javascript can be a pretty daunting hurdle to overcome. When we write/debug async code, problems arise where it can be difficult to even pinpoint where the problem is happening. This workshop is designed to establish a base level understanding of how, and maybe more importantly, **when** javascript code executes within a code base.
 
 > It's ok to not know the concepts during the discussion exercises, they will be explained afterwards. Programmers generally ... names things well. If you don't know a concept, it is encouraged to take your best guess and contribute to the discussion.
 
-## Javascript is single threaded (3/5)
+## Javascript is single threaded (3/7)
 In computer programming, single-threading is the processing of one command at a time. JS is a programming language that is single threaded. Javascript code, in its single threaded nature must "run to completion" within an execution context.
 
 In order to understand the complex nature of asynch program execution, we need to establish a strong foundation in understanding of how JS's synchronous program execution works.
 
-### Discussion exercise 1 - the unknown foundations (10/15)
+### Discussion exercise 1 - the unknown foundations (5/12)
 Try to incorporate within your discussion the following terms or discuss the terms you are unfamiliar with:
 - run to completion
 - execution context
@@ -36,7 +35,7 @@ console.log(number);
 
 ---
 
-## execution context (2/17)
+## execution context (2/14)
 Execution context is defined as the environment in which JavaScript code is executed. The JavaScript engine creates a global execution context before it starts to execute any code(think `main.js` or `script.js`). From that point on, a new execution context gets created every time a function is executed, as the engine parses through your code.
 
 The global execution context is nothing special. It’s just like any other execution context, except that it gets created by default.
@@ -58,7 +57,7 @@ In this snippet, there are at least three contexts that are used. We're already 
 
 One thing that doesn't go on the call stack is the actual function declaration. This just gets stored in the heap as a function.
 
-## Call Stack (3/20)
+## Call Stack (3/17)
 The call stack is a collection of execution contexts.
 
 > The easiest way to conceptualize the call stack and various other components of JS execution is visualizations. Throughout this workshop, there will be visuals to help describe the various mechanisms of JS execution. Assume the snippets are named `main.js`. For clarity, we'll show global context here in this first example, but subsequent examples won't include the global execution context of `main.js`.
@@ -108,13 +107,13 @@ Script `main.js` and program finishes:
 
 Through these visualizations we can start to see the single threaded nature of javascript.
 
-### The Problem (5/25)
+### The Problem (3/20)
 
 The problem with single threaded programming is that some processes take a long time. Let's take a look at this [code pen example](https://codepen.io/andrewsunglaekim/pen/RYPLmz)
 
 Now this particular process took an... infinity amount of time. In that time, we couldn't click the button again the gif stopped animating. But we, as developers, constantly need to use things that take an unknown or large amount of time. In the era of UI, even 500ms is far too long to block anything.
 
-### The Solution (5/30)
+### The Solution (3/23)
 
 Asynchronous programming. With async programming, we can defer functionality to another api and create a `task` to be completed later based on the result. Go do this thing, and then when you're done with the thing, we'll tell you what to do next.
 
@@ -131,7 +130,7 @@ while (queue.waitForMessage()) {
 }
 ```
 
-### Discussion exercise 2 - the "event loop" and the queue (5/35)
+### Discussion exercise 2 - the "event loop" and the queue (5/28)
 An easy way to visualize the event loop is through a simple browser event listener.
 
 Try to incorporate within your discussion the following terms or discuss the terms you are unfamiliar with respect to this code
@@ -174,7 +173,7 @@ We can examine this code now in the lense of the call stack.
 
 And the program is finished. Or is it? What happens if a user clicks my button. How is that callback being executed? The event loop is a constantly running thread. It needs a place to queue up tasks to do. Enter the message queue
 
-### [Message queue](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop#Queue) (10/45)
+### [Message queue](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop#Queue) (10/38)
 
 It's basically just a list of tasks that need to be processed by the JS thread. MDN really says it best:
 
@@ -206,18 +205,36 @@ for(let i = 0; i < 700000; i++){
 
 Depending on the computer, the above code takes roughly a second while dev tools are open. If we were to pour through the logs after clicking several times very quickly, we would see that none of the numbers get mixed up, each function completely finishes before the next function in the loop gets run.
 
-###  JS single threaded but async? (2/47)
-Even though we say JS as a language is single threaded, browsers and `node.js` are not. Things like `.setTimeout`, `XMLHttpRequest` file I/O are browser or node apis which behaviors are handled outside of the main thread. We can't tie up the main thread with long processes like fetching data or waiting of n milliseconds.
+MDN does a great job illustrating run to completion with regard to the message queue in this snippet:
+
+```js
+const s = new Date().getSeconds();
+
+setTimeout(function() {
+  // prints out "2", meaning that the callback is not called immediately after 500 milliseconds.
+  console.log("Ran after " + (new Date().getSeconds() - s) + " seconds");
+}, 500);
+
+while(true) {
+  if(new Date().getSeconds() - s >= 2) {
+    console.log("Good, looped for 2 seconds");
+    break;
+  }
+}
+```
+
+###  JS single threaded but async? (2/40)
+Even though we say JS as a language is single threaded, browsers and `node.js` are not. Things like `.setTimeout`, `XMLHttpRequest` file I/O are browser or node apis. Their behaviors are handled outside of the main thread. We can't tie up the main thread with long processes like fetching data or waiting of n milliseconds.
 
 Instead, we call functions to defer these processes to browser/node apis. Those apis get plugged back into the main thread through the message queue.
 
-### js promises (3/50)
+### js promises (3/43)
 
 We can use promises to queue up messages from these various apis.
 
 The Promise object represents the eventual completion (or failure) of an asynchronous operation, and its resulting value.
 
-### Discussion exercise 3 - determining order (10/60)
+### Discussion exercise 3 - determining order (10/53)
 
 Let's take the first minute looking at the code alone with the following things in mind:
 
@@ -312,7 +329,7 @@ Then finally the last `console.log(7)` executes and the clicks execution context
 
 The messages in the queue are then evaluated in order with either `4` or `5` then `6`.
 
-### Discussion exercise 4 - Rethinking order (5/65)
+### Discussion exercise 4 - Rethinking order (5/58)
 
 Let's examine the same code only now let's place the `setTimeout` further up in the code:
 
@@ -362,7 +379,7 @@ we can visualize the queue as such:
 
 The event loop will always take the top and left most message in the visual queue above. That is to say, the queue will always send micro tasks, if there are any, before regular tasks. In this case, even though `setTimeout` was queued before the promise's task, it was logged later because the promise's task was prioritized
 
-### Discussion exercise 5 - microtask specifics (10/75)
+### Discussion exercise 5 - microtask specifics (10/68)
 
 Chat about [this codepen](https://codepen.io/andrewsunglaekim/pen/MqeaVj)
 
@@ -444,13 +461,6 @@ Then both the `'timeout'` tasks are run as well.
 
 What happens if you add `button.click()` to the end of the file.
 What will log on page load?
-
-### Apologies - `async`/`await`
-So when I gave the title and description of this class a month ago, I thought I would pepper in a bit of async await code at the end to show how that syntatic sugar can clean up a code base.(and it does a really great job doing that!)
-
-However, while developing this workshop, I felt it was a bit out of scope and doesn't really add any additional value to the concepts discussed today. `async/await` is really just a wrapper for promises and act on the message queue and call stack in the same way.
-
-If there's enough interest, we could do a workshop doing actual api calls with nested promises and see how async/await can help clean up that async code and focus a little on return values of promises.
 
 ### Thanks
 
