@@ -1,14 +1,14 @@
 # Asynchronous JS and the message queue
 
 ## Learning objectives (4/4)
-- [Define Javascript as a single threaded language within the browser](https://github.com/andrewsunglaekim/event-loop-workshop#javascript-is-single-threaded-35)
+- [Define Javascript as a single threaded language within the browser](https://github.com/andrewsunglaekim/event-loop-workshop#javascript-is-single-threaded-37)
 - [Explain how javascript functions "run to completion"](https://github.com/andrewsunglaekim/event-loop-workshop#run-to-completion)
-- [Define "execution context"](https://github.com/andrewsunglaekim/event-loop-workshop#execution-context-217)
-- [Determine the composition and execution order of the javascript call stack](https://github.com/andrewsunglaekim/event-loop-workshop#call-stack-320)
-- [Identify the problem that asynchronous program execution solves](https://github.com/andrewsunglaekim/event-loop-workshop#the-problem-525)
+- [Define "execution context"](https://github.com/andrewsunglaekim/event-loop-workshop#execution-context-214)
+- [Determine the composition and execution order of the javascript call stack](https://github.com/andrewsunglaekim/event-loop-workshop#call-stack-317)
+- [Identify the problem that asynchronous program execution solves](https://github.com/andrewsunglaekim/event-loop-workshop#the-problem-320)
 - [Describe the concurrency model of JS based on the "event loop"](https://github.com/andrewsunglaekim/event-loop-workshop#concurrency-model)
-- [Give an example of how the message queue is leveraged in javascript.](https://github.com/andrewsunglaekim/event-loop-workshop#message-queue-1045)
-- [Leverage promises to handle asynchronous behavior](https://github.com/andrewsunglaekim/event-loop-workshop#js-promises-350)
+- [Give an example of how the message queue is leveraged in javascript.](https://github.com/andrewsunglaekim/event-loop-workshop#message-queue-1038)
+- [Leverage promises to handle asynchronous behavior](https://github.com/andrewsunglaekim/event-loop-workshop#js-promises-343)
 - [Identify a distinction between tasks and micro tasks.](https://github.com/andrewsunglaekim/event-loop-workshop#micro-tasks)
 
 ## Framing
